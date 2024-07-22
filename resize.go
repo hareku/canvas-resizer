@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"io"
+	"log/slog"
 
 	"github.com/disintegration/imaging"
 )
@@ -23,6 +24,12 @@ func ResizeCanvas(in ResizeCanvasInput) error {
 	}
 
 	bounds := img.Bounds()
+	slog.Info("image decoded", "size", bounds.Max)
+
+	if in.WidthRatio == 1.0 && in.HeightRatio == 1.0 {
+		return fmt.Errorf("width ratio and height ratio are both 1.0")
+	}
+
 	canvas := imaging.New(int(float64(bounds.Dx())*in.WidthRatio), int(float64(bounds.Dy())*in.HeightRatio), color.Black)
 
 	bgBounds := canvas.Bounds()
@@ -35,5 +42,7 @@ func ResizeCanvas(in ResizeCanvasInput) error {
 	if err := imaging.Encode(in.Dst, out, imaging.PNG, imaging.PNGCompressionLevel(0)); err != nil {
 		return fmt.Errorf("encode image: %w", err)
 	}
+	slog.Info("image encoded", "size", out.Bounds().Max)
+
 	return nil
 }

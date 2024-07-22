@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"strconv"
 
@@ -63,6 +64,7 @@ func main() {
 			}); err != nil {
 				return fmt.Errorf("resize canvas: %w", err)
 			}
+			slog.Info("resize canvas", "src", cCtx.String("src"), "dst", dstName)
 			return nil
 		},
 	}
